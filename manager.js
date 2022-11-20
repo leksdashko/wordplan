@@ -11,24 +11,28 @@ class BotManager {
 	}
 
 	init() {
+		botService.initBot(this.bot);
+		
 		this.bot.setMyCommands(botService.createBasicMenu());
 
 		this.bot.on('message', async (msg) => {
 			const text = msg.text;
-			const chatId = msg.chat.id.toString();
+			const chatId = msg.chat.id;
 			const userName = msg.from?.username;
 
 			try {
 				if(botService.isStart(text)){
-					const user = await userService.join(chatId, userName);
+					await userService.join(chatId, userName);
 					
-					await this.bot.sendMessage(chatId, 'Hello ' + userName + '!', botService.createClassicMenu());
+					return botService.start(chatId);
+				}
 
-					console.log(user);
+				if(botService.isLearning(text)){
+					return botService.learning(chatId);
 				}
 
 				if(botService.isStop(text)){
-
+					return botService.stop(chatId);
 				}
 
 				if(botService.isAdd(text)){

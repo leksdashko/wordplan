@@ -12,12 +12,37 @@ class BotService {
 	MESSAGE_SKIP      = 'Skip';
 	MESSAGE_TRANSLATE = 'Translate';
 
-	async start() {
+	bot;
+	processId;
+
+	initBot(bot) {
+		this.bot = bot;
+	}
+
+	start(chatId) {
 
 	}
 
-	async stop() {
+	async learning(chatId) {
+		if(this.processId) clearInterval(this.processId);
 
+		await this.bot.sendMessage(chatId, 'Learning process has started', this.createClassicMenu());
+
+		this.processId = setInterval(() => {
+			const data = {
+				id: 2
+			}
+
+			this.bot.sendMessage(chatId, 'word first', this.createInlineMenu(data));
+		}, 3000);
+	}
+
+	async stop(chatId) {
+		if(!this.processId) return false;
+		
+		clearInterval(this.processId);
+
+		return this.bot.sendMessage(chatId, 'Process was cleared - ' + this.processId);
 	}
 
 	async add() {
@@ -56,6 +81,12 @@ class BotService {
 		return false;
 	}
 
+	isLearning(action){
+		if(action === this.MESSAGE_LEARNING) return true;
+
+		return false;
+	}
+
 	createBasicMenu = () => {
 		return [
 			{command: this.ACTION_START, description: 'Start bot'},
@@ -84,8 +115,8 @@ class BotService {
 			reply_markup: JSON.stringify({
 				inline_keyboard: [
 					[
-						{text: translate, callback_data: this.createInlineData(translate, data.id)},
-						{text: skip, callback_data: this.createInlineData(skip, data.id)}
+						{text: translate, callback_data: this.createInlineData(translate, data.wordId)},
+						{text: skip, callback_data: this.createInlineData(skip, data.wordId)}
 					]
 				]
 			})

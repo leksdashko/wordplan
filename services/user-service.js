@@ -4,6 +4,8 @@ const BotError = require('../exceptions/bot-error');
 
 class UserService {
     async join(chatId, username = null) {
+				chatId = chatId.toString();
+				
         const candidate = await this.getByChatId(chatId);
         if(candidate){
             return candidate;
