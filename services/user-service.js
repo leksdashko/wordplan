@@ -1,4 +1,4 @@
-const UserModel = require('../models');
+const UserModel = require('../models/user-model');
 const UserDto = require('../dtos/user-dto');
 const BotError = require('../exceptions/bot-error');
 

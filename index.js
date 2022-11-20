@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./models');
 const sequelize = require('./db');
 const bot = require('./manager');
 

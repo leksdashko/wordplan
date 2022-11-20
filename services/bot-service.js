@@ -24,6 +24,20 @@ class BotService {
 
 	}
 
+	createInlineData = (action, id) => {
+		return action + '_' + id;
+	}
+	
+	parseInlineData = (data) => {
+		const res = data.split('_');
+		if(res.length < 2) return;
+	
+		return {
+			id: res[1],
+			action: res[0]
+		}
+	}
+
 	isStart(action){
 		if(action === this.ACTION_START || action === this.MESSAGE_START) return true;
 

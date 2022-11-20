@@ -1,38 +1,15 @@
-const WordModel = require('../models');
+const WordModel = require('../models/word-model');
 const WordDto = require('../dtos/word-dto');
 const BotError = require('../exceptions/bot-error');
 
-class UserService {
-    async join(chatId, username = null) {
-        const candidate = await this.getByChatId(chatId);
-        if(candidate){
-            return candidate;
-        }
-
-        const user = await UserModel.create({chatId, username});
-        const userDto = new UserDto(user);
-
-        return {
-            user: userDto
-        }
+class WordService {
+    async add(value) {
+        
     }
-
-		async getByChatId(chatId) {
-			const user = await UserModel.findOne({where: {chatId}});
-			if(user){
-				const userDto = new UserDto(user);
-				return {
-					user: userDto
-				}
-			}
-			
-			return null;
-	}
     
-    async getAllUsers() {
-        const users = await UserModel.findAll();
-        return users;
+    async getAllUserWords() {
+			
     }
 }
 
-module.exports = new UserService();
+module.exports = new WordService();
