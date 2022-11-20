@@ -1,0 +1,24 @@
+{
+  "name": "wordplan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+		"vocabulary", "dictionary", "telegram vacabulary", "learn words"
+	],
+  "author": "Oleksandr Dashko",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+		"node-telegram-bot-api": "^0.59.0",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.12.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
