@@ -9,6 +9,10 @@ module.exports = class BotError extends Error {
         this.errors = errors;
     }
 
+    static UnauthorizedError() {
+        return new BotError(401, 'User not authorized');
+    }
+
     static BadRequest(message, errors = []) {
         return new BotError(400, message, errors);
     }

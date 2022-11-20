@@ -4,9 +4,9 @@ const BotError = require('../exceptions/bot-error');
 
 class UserService {
     async join(chatId, username = null) {
-        const candidate = await UserModel.findOne({where: {chatId}});
+        const candidate = await this.getByChatId(chatId);
         if(candidate){
-            throw BotError.BadRequest(`User not found`);
+            return candidate;
         }
 
         const user = await UserModel.create({chatId, username});
@@ -16,6 +16,18 @@ class UserService {
             user: userDto
         }
     }
+
+		async getByChatId(chatId) {
+			const user = await UserModel.findOne({where: {chatId}});
+			if(user){
+				const userDto = new UserDto(user);
+				return {
+					user: userDto
+				}
+			}
+			
+			return null;
+	}
     
     async getAllUsers() {
         const users = await UserModel.findAll();
