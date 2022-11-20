@@ -1,5 +1,5 @@
-const UserModel = require('../models');
-const UserDto = require('../dtos/user-dto');
+const WordModel = require('../models');
+const WordDto = require('../dtos/word-dto');
 const BotError = require('../exceptions/bot-error');
 
 class UserService {

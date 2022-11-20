@@ -1,21 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
 const userService = require('./services/user-service');
-const UserService = require('./services/user-service');
+const botService = require('./services/bot-service');
 
 class BotManager {
-	ACTION_START = '/start';
-	ACTION_STOP  = '/stop';
-	ACTION_ADD   = '/add';
-
-	MESSAGE_START    = 'Start';
-	MESSAGE_STOP     = 'Stop';
-	MESSAGE_ADD_NEW  = 'Add new';
-	MESSAGE_LEARNING = 'Learning';
-	MESSAGE_PRACTICE = 'Practice';
-
-	MESSAGE_SKIP      = 'Skip';
-	MESSAGE_TRANSLATE = 'Translate';
-
 	bot;
 
 	constructor(){
@@ -29,17 +16,17 @@ class BotManager {
 			const userName = msg.from?.username;
 
 			try {
-				if(this.isStart(text)){
+				if(botService.isStart(text)){
 					const user = await userService.join(chatId, userName);
 
 					console.log(user);
 				}
 
-				if(this.isStop(text)){
+				if(botService.isStop(text)){
 
 				}
 
-				if(this.isAdd(text)){
+				if(botService.isAdd(text)){
 
 				}
 			} catch(e) {
@@ -51,24 +38,6 @@ class BotManager {
 
 	error(chatId, message){
 		return this.bot.sendMessage(chatId, message);
-	}
-
-	isStart(action){
-		if(action === this.ACTION_START || action === this.MESSAGE_START) return true;
-
-		return false;
-	}
-
-	isStop(action){
-		if(action === this.ACTION_STOP || action === this.MESSAGE_STOP) return true;
-
-		return false;
-	}
-
-	isAdd(action){
-		if(action === this.ACTION_ADD || action === this.MESSAGE_ADD_NEW) return true;
-
-		return false;
 	}
 }
 
