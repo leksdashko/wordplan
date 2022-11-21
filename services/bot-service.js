@@ -1,3 +1,5 @@
+const { createArrayOfNumbers } = require("../utils");
+
 class BotService {
 	ACTION_START = '/start';
 	ACTION_STOP  = '/stop';
@@ -20,29 +22,39 @@ class BotService {
 	}
 
 	start(chatId) {
-
+		return this.bot.sendMessage(chatId, 'Choose your option:', this.createClassicMenu());
 	}
 
-	async learning(chatId) {
+	async learning(chatId, vocabulary) {
 		if(this.processId) clearInterval(this.processId);
 
-		await this.bot.sendMessage(chatId, 'Learning process has started', this.createClassicMenu());
+		const count = vocabulary.length;
+		if(!count){
+			return this.bot.sendMessage(chatId, 'Please add new words to your vocabulary');
+		}
+		
+		await this.bot.sendMessage(chatId, 'Learning process has started');
+
+		let notShowed = createArrayOfNumbers(count);
 
 		this.processId = setInterval(() => {
-			const data = {
-				id: 2
+			const index = notShowed.shift();
+			const word = vocabulary[index];
+
+			if(notShowed.length < 1){
+				notShowed = createArrayOfNumbers(count);
 			}
 
-			this.bot.sendMessage(chatId, 'word first', this.createInlineMenu(data));
+			this.bot.sendMessage(chatId, word.value, this.createInlineMenu(word));
 		}, 3000);
 	}
 
-	async stop(chatId) {
+	stop(chatId) {
 		if(!this.processId) return false;
 		
 		clearInterval(this.processId);
 
-		return this.bot.sendMessage(chatId, 'Process was cleared - ' + this.processId);
+		return this.bot.sendMessage(chatId, 'Process has cleared - ' + this.processId);
 	}
 
 	async add() {
@@ -99,15 +111,15 @@ class BotService {
 		return {
 			reply_markup: {
 				keyboard: [
-					[{text: this.MESSAGE_START}, {text: this.MESSAGE_STOP}, {text: this.MESSAGE_ADD_NEW}],
-					[{text: this.MESSAGE_LEARNING}, {text: this.MESSAGE_PRACTICE}]
+					[{text: this.MESSAGE_LEARNING}, {text: this.MESSAGE_STOP}],
+					[{text: this.MESSAGE_PRACTICE}, {text: this.MESSAGE_ADD_NEW}]
 				], 
 				resize_keyboard: true
 			}
 		}
 	}
 	
-	createInlineMenu = (data) => {
+	createInlineMenu = (word) => {
 		const translate = this.MESSAGE_TRANSLATE;
 		const skip = this.MESSAGE_SKIP;
 	
@@ -115,8 +127,8 @@ class BotService {
 			reply_markup: JSON.stringify({
 				inline_keyboard: [
 					[
-						{text: translate, callback_data: this.createInlineData(translate, data.wordId)},
-						{text: skip, callback_data: this.createInlineData(skip, data.wordId)}
+						{text: word.translation, callback_data: this.createInlineData(translate, word.id)},
+						{text: skip, callback_data: this.createInlineData(skip, word.id)}
 					]
 				]
 			})

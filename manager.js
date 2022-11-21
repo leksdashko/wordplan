@@ -20,15 +20,17 @@ class BotManager {
 			const chatId = msg.chat.id;
 			const userName = msg.from?.username;
 
+			const user = await userService.join(chatId, userName);
+
 			try {
 				if(botService.isStart(text)){
-					await userService.join(chatId, userName);
-					
 					return botService.start(chatId);
 				}
 
 				if(botService.isLearning(text)){
-					return botService.learning(chatId);
+					const vocabulary = await wordService.getList(user.id);
+
+					return botService.learning(chatId, vocabulary);
 				}
 
 				if(botService.isStop(text)){
@@ -40,6 +42,7 @@ class BotManager {
 				}
 			} catch(e) {
 				console.log(e);
+				botService.stop(chatId);
 				return this.error(chatId, 'Something went wrong');
 			}
 		});
