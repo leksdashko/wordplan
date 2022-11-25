@@ -1,4 +1,6 @@
 const { createArrayOfNumbers } = require("../utils");
+const userService = require("./user-service");
+const wordService = require("./word-service");
 
 class BotService {
 	ACTION_START = '/start';
@@ -16,6 +18,12 @@ class BotService {
 
 	bot;
 	processId;
+
+	isAddMode = false;
+	currentTranslation = {
+		value: null,
+		translation: null
+	};
 
 	initBot(bot) {
 		this.bot = bot;
@@ -49,16 +57,65 @@ class BotService {
 		}, 3000);
 	}
 
-	stop(chatId) {
-		if(!this.processId) return false;
-		
-		clearInterval(this.processId);
+	async stop(chatId) {
+		this.deactivateAddMode();
 
-		return this.bot.sendMessage(chatId, 'Process has cleared - ' + this.processId);
+		if(this.processId) {
+			const processId = this.processId;
+
+			clearInterval(this.processId);
+
+			this.processId = null;
+
+			return this.bot.sendMessage(chatId, 'Process has cleared - ' + processId);
+		}
 	}
 
-	async add() {
+	async add(chatId, string) {
+		if(!this.currentTranslation.value){
+			this.currentTranslation.value = string;
+			return this.type(chatId);
+		}else{
+			this.currentTranslation.translation = string;
 
+			const user = await userService.getByChatId(chatId);
+			const word = await wordService.add(user.id, this.currentTranslation.value, this.currentTranslation.translation);
+
+			this.clearCurrentTranslation();
+
+			await this.bot.sendMessage(chatId, 'New translation ['+word.value+' - '+word.translation+'] added');
+
+			return this.type(chatId);
+		}
+	}
+
+	type = (chatId) => {
+		let message = 'Type some phrase:';
+		if(this.currentTranslation.value){
+			message = 'Type translation:';
+		}
+
+		return this.bot.sendMessage(chatId, message);
+	}
+ 
+	activateAddMode = () => {
+		if(!this.isAddMode){
+			this.isAddMode = true;
+		}
+	}
+
+	deactivateAddMode = () => {
+		if(this.isAddMode){
+			this.isAddMode = false;
+			this.clearCurrentTranslation();
+		}
+	}
+
+	clearCurrentTranslation = () => {
+		this.currentTranslation = {
+			value: null,
+			translation: null
+		}
 	}
 
 	createInlineData = (action, id) => {

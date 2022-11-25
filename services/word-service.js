@@ -1,16 +1,15 @@
 const WordModel = require('../models/word-model');
-const WordDto = require('../dtos/word-dto');
-const BotError = require('../exceptions/bot-error');
 
 class WordService {
 	defaultLimit = 10;
 
 	async getList(userId, limit = this.defaultLimit) {
-		return await WordModel.findAll({userId, isLearned: false, limit});
+		const list = await WordModel.findAll({where: {userId, isLearned: false}, limit, order: [['id', 'DESC']]});
+		return list;
 	}
 
-	async add(value) {
-			
+	async add(userId, value, translation) {
+		return await WordModel.create({userId, value, translation});
 	}
 	
 	async getAllUserWords() {
@@ -18,4 +17,4 @@ class WordService {
 	}
 }
 
-module.exports = new WordService();
+module.exports = WordService;

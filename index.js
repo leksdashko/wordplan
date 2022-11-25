@@ -1,7 +1,7 @@
 require('dotenv').config();
 require('./models');
 const sequelize = require('./db');
-const bot = require('./manager');
+const BotManager = require('./manager');
 
 const start = async () => {
     try{
@@ -11,6 +11,7 @@ const start = async () => {
         console.log(e);
     }
 
+		const bot = new BotManager();
 		bot.init();
 }
 

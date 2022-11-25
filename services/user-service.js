@@ -1,6 +1,4 @@
 const UserModel = require('../models/user-model');
-const UserDto = require('../dtos/user-dto');
-const BotError = require('../exceptions/bot-error');
 
 class UserService {
     async join(chatId, username = null) {
@@ -12,24 +10,29 @@ class UserService {
         }
 
         const user = await UserModel.create({chatId, username});
-        const userDto = new UserDto(user);
 
-        return {
-            user: userDto
-        }
+        return user;
     }
 
+		async setLearningProcess(userId, processId) {
+			const user = await UserModel.findOne({where: {id: userId}});
+			user.learningId = processId;
+			return user.save();
+		}
+
+		async clearLearningProcess(userId) {
+			const user = await UserModel.findOne({where: {id: userId}});
+
+			clearInterval(user.learningId);
+
+			user.learningId = null;
+			return user.save();
+		}
+
 		async getByChatId(chatId) {
-			const user = await UserModel.findOne({where: {chatId}});
-			if(user){
-				const userDto = new UserDto(user);
-				return {
-					user: userDto
-				}
-			}
-			
-			return null;
-	}
+			const user = await UserModel.findOne({where: {chatId:chatId.toString()}});
+			return user;
+		}
     
     async getAllUsers() {
         const users = await UserModel.findAll();
@@ -37,4 +40,4 @@ class UserService {
     }
 }
 
-module.exports = new UserService();
+module.exports = UserService;

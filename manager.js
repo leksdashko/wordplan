@@ -1,65 +1,47 @@
 const TelegramBot = require('node-telegram-bot-api');
-const userService = require('./services/user-service');
-const wordService = require('./services/word-service');
-const botService = require('./services/bot-service');
+const Chat = require('./chat/chat');
+const routes = require('./routes');
 
 class BotManager {
-	bot;
-
-	constructor(){
-		this.bot = new TelegramBot(process.env.TOKEN, {polling: true});
-	}
-
 	init() {
-		botService.initBot(this.bot);
-		
-		this.bot.setMyCommands(botService.createBasicMenu());
+		const bot = new TelegramBot(process.env.TOKEN, {polling: true});
 
-		this.bot.on('message', async (msg) => {
+		bot.on('message', async (msg) => {
 			const text = msg.text;
 			const chatId = msg.chat.id;
-			const userName = msg.from?.username;
 
-			const user = await userService.join(chatId, userName);
+			const chat = new Chat(chatId, bot);
 
 			try {
-				if(botService.isStart(text)){
-					return botService.start(chatId);
-				}
-
-				if(botService.isLearning(text)){
-					const vocabulary = await wordService.getList(user.id);
-
-					return botService.learning(chatId, vocabulary);
-				}
-
-				if(botService.isStop(text)){
-					return botService.stop(chatId);
-				}
-
-				if(botService.isAdd(text)){
-
-				}
+				routes.forEach((route) => {
+					if(route.actions.indexOf(text) !== -1){
+						const modeType = require('./chat/modes/mode-' + route.mode);
+						return chat.setMode(new modeType(bot, chatId));
+					}
+				});
 			} catch(e) {
 				console.log(e);
-				botService.stop(chatId);
-				return this.error(chatId, 'Something went wrong');
+				return this.error(bot, chatId, 'Something went wrong');
 			}
 		});
 
-		this.bot.on('callback_query', msg => {
+		bot.on('callback_query', msg => {
 			const data = botService.parseInlineData(msg.data);
-			const chat = msg.message.chat.id;
+
+			const chat = new Chat(msg.message.chat.id, bot);
 			
-			if(data.action === botService.MESSAGE_SKIP){
-				//return skip(data.id);
-			}
+			routes.forEach((route) => {
+				if(route.actions.indexOf(text) !== -1){
+					const modeType = require('./chat/modes/mode-' + route.mode);
+					return chat.setMode(new modeType(bot, chatId));
+				}
+			});
 		});
 	}
 
-	error(chatId, message){
-		return this.bot.sendMessage(chatId, message);
+	error(bot, chatId, message){
+		return bot.sendMessage(chatId, message);
 	}
 }
 
-module.exports = new BotManager();
+module.exports = BotManager;
