@@ -1,7 +1,7 @@
 const UserModel = require('../models/user-model');
 
 class UserService {
-    async join(chatId, username = null) {
+    static async join(chatId, username = null) {
 				chatId = chatId.toString();
 				
         const candidate = await this.getByChatId(chatId);
@@ -14,14 +14,14 @@ class UserService {
         return user;
     }
 
-		async setLearningProcess(userId, processId) {
+		static async setLearningProcess(userId, processId) {
 			const user = await UserModel.findOne({where: {id: userId}});
-			user.learningId = processId;
+			user.learningId = processId + 0;
 			return user.save();
 		}
 
-		async clearLearningProcess(userId) {
-			const user = await UserModel.findOne({where: {id: userId}});
+		static async clearLearningProcess(user) {
+			if(!user.learningId) return null;
 
 			clearInterval(user.learningId);
 
@@ -29,14 +29,19 @@ class UserService {
 			return user.save();
 		}
 
-		async getByChatId(chatId) {
+		static async getById(id) {
+			const user = await UserModel.findOne({where: {id}});
+			return user;
+		}
+
+		static async getByChatId(chatId) {
 			const user = await UserModel.findOne({where: {chatId:chatId.toString()}});
 			return user;
 		}
     
-    async getAllUsers() {
-        const users = await UserModel.findAll();
-        return users;
+    static async getAllUsers() {
+			const users = await UserModel.findAll();
+			return users;
     }
 }
 

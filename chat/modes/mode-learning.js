@@ -1,8 +1,13 @@
+const UserService = require("../../services/user-service");
 const WordService = require("../../services/word-service");
 const { createArrayOfNumbers, shuffleArray } = require("../../utils");
 const Mode = require("./mode");
 
 class ModeLearning extends Mode {
+	interval = 5000;
+	// expiredIn = 1000 * 60 * 60 * 1; // one hour
+	expiredIn = 15000;
+
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';
 
@@ -38,10 +43,25 @@ class ModeLearning extends Mode {
 			}
 
 			this.bot.sendMessage(this.chatId, word.translation + ' - ' + processId);
-		}, 60000);
+		}, this.interval);
 
-		this.user.learningId = processId + 0;
-		this.user.save();
+		setTimeout(() => {
+			this.stop();
+		}, this.expiredIn);
+
+		return await UserService.setLearningProcess(this.user.id, processId);
+	}
+
+	async stop() {
+		const user = await UserService.getById(this.user.id);
+
+		if(!user.learningId) return false;
+
+		this.initDefaultKeyboard();
+		
+		clearInterval(user.learningId);
+
+		return await UserService.clearLearningProcess(user);
 	}
 }
 

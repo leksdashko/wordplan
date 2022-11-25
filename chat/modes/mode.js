@@ -16,8 +16,7 @@ class Mode {
 	}
 
 	async init() {
-		const userService = new UserService();
-		const user = await userService.join(this.chatId);
+		const user = await UserService.join(this.chatId);
 
 		this.user = user;
 

@@ -1,15 +1,16 @@
+const UserService = require("../../services/user-service");
 const Mode = require("./mode");
 
 class ModeStop extends Mode {
 	async init() {
 		await super.init();
 
-		if(this.user?.learningId){
-			clearInterval(this.user.learningId);
+		const user = await UserService.getById(this.user.id);
 
-			this.user.learningId = null;
+		if(user.learningId){
+			clearInterval(user.learningId);
 
-			return this.user.save();
+			return await UserService.clearLearningProcess(user);
 		}
 	}
 }
