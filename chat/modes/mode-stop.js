@@ -5,7 +5,7 @@ class ModeStop extends Mode {
 	async init() {
 		await super.init();
 
-		const user = await UserService.getById(this.user.id);
+		const user = await UserService.getById(this.chat.user.id);
 
 		if(user.learningId){
 			clearInterval(user.learningId);

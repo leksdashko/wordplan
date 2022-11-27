@@ -3,7 +3,6 @@ const UserService = require("../../services/user-service");
 const WordService = require("../../services/word-service");
 const { createArrayOfNumbers, shuffleArray } = require("../../utils");
 const Mode = require("./mode");
-const ModeEdit = require("./mode-edit");
 
 class ModeLearning extends Mode {
 	interval = 5000;
@@ -13,28 +12,14 @@ class ModeLearning extends Mode {
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';
 
-	ACTION_SKIP      = 'Skip';
-	ACTION_TRANSLATE = 'Translate';
-
 	async init(){
 		await super.init();
 		await this.start();
-
-		this.bot.on('callback_query', async msg => {
-			//const chatId = msg.message.chat.id;
-			const data = botService.parseInlineData(msg.data);
-
-			if(!data?.action) return false;
-
-			if(data.action == this.ACTION_EDIT) {
-				return await this.chat.setMode(new ModeEdit(this.bot, this.chat));
-			}
-		});
 	}
 
 	async start(){
 		const wordService = new WordService();
-		const vocabulary = await wordService.getList(this.user.id);
+		const vocabulary = await wordService.getList(this.chat.user.id);
 
 		const count = vocabulary.length;
 		if(!count){
@@ -69,11 +54,11 @@ class ModeLearning extends Mode {
 			this.stop();
 		}, this.expiredIn);
 
-		return await UserService.setLearningProcess(this.user.id, processId);
+		return await UserService.setLearningProcess(this.chat.user.id, processId);
 	}
 
 	async stop() {
-		const user = await UserService.getById(this.user.id);
+		const user = await UserService.getById(this.chat.user.id);
 
 		if(!user.learningId) return false;
 

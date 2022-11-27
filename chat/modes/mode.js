@@ -1,11 +1,13 @@
-const UserService = require("../../services/user-service");
-
 class Mode {
-	ACTION_STOP     = 'Stop';
-	ACTION_CANCEL   = 'Cancel';
-	ACTION_LEARNING = 'Learning';
-	ACTION_ADD      = 'Add new';
-	ACTION_EDIT     = 'Edit';
+	ACTION_STOP      = 'Stop';
+	ACTION_CANCEL    = 'Cancel';
+	ACTION_LEARNING  = 'Learning';
+	ACTION_ADD       = 'Add new';
+	ACTION_EDIT      = 'Edit';
+	ACTION_UPDATE    = 'Update';
+	ACTION_SKIP      = 'Skip';
+	ACTION_TRANSLATE = 'Translate';
+
 
 	buttons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
 	defaultButtons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
@@ -18,10 +20,6 @@ class Mode {
 	}
 
 	async init() {
-		const user = await UserService.join(this.chat.id);
-
-		this.user = user;
-
 		return this.initKeyboard();
 	}
 
