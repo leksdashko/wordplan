@@ -16,23 +16,9 @@ class BotManager {
 				routes.forEach((route) => {
 					if(route.actions.indexOf(text) !== -1){
 						const modeType = require('./chat/modes/mode-' + route.mode);
-						return chat.setMode(new modeType(bot, chatId));
+						return chat.setMode(new modeType(bot, chat));
 					}
 				});
-			} catch(e) {
-				console.log(e);
-				return this.error(bot, chatId, 'Something went wrong');
-			}
-		});
-
-		bot.on('callback_query', msg => {
-			const data = botService.parseInlineData(msg.data);
-			const chatId = msg.message.chat.id;
-
-			const chat = new Chat(chatId, bot);
-			
-			try {
-				
 			} catch(e) {
 				console.log(e);
 				return this.error(bot, chatId, 'Something went wrong');

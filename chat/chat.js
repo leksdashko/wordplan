@@ -5,7 +5,13 @@ class Chat {
 	}
 
 	async setMode(mode) {
-		await mode.init()
+		if(this.mode){
+			await this.mode.stop();
+		}
+
+		await mode.init();
+
+		this.mode = mode;
 	}
 }
 

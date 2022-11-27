@@ -132,30 +132,6 @@ class BotService {
 		}
 	}
 
-	isStart(action){
-		if(action === this.ACTION_START || action === this.MESSAGE_START) return true;
-
-		return false;
-	}
-
-	isStop(action){
-		if(action === this.ACTION_STOP || action === this.MESSAGE_STOP) return true;
-
-		return false;
-	}
-
-	isAdd(action){
-		if(action === this.ACTION_ADD || action === this.MESSAGE_ADD_NEW) return true;
-
-		return false;
-	}
-
-	isLearning(action){
-		if(action === this.MESSAGE_LEARNING) return true;
-
-		return false;
-	}
-
 	createBasicMenu = () => {
 		return [
 			{command: this.ACTION_START, description: 'Start bot'},
@@ -176,21 +152,7 @@ class BotService {
 		}
 	}
 	
-	createInlineMenu = (word) => {
-		const translate = this.MESSAGE_TRANSLATE;
-		const skip = this.MESSAGE_SKIP;
 	
-		return {
-			reply_markup: JSON.stringify({
-				inline_keyboard: [
-					[
-						{text: word.translation, callback_data: this.createInlineData(translate, word.id)},
-						{text: skip, callback_data: this.createInlineData(skip, word.id)}
-					]
-				]
-			})
-		}
-	};
 }
 
 module.exports = new BotService();

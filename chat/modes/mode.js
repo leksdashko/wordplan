@@ -2,21 +2,23 @@ const UserService = require("../../services/user-service");
 
 class Mode {
 	ACTION_STOP     = 'Stop';
+	ACTION_CANCEL   = 'Cancel';
 	ACTION_LEARNING = 'Learning';
 	ACTION_ADD      = 'Add new';
+	ACTION_EDIT     = 'Edit';
 
 	buttons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
 	defaultButtons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
 
 	startMessage    = 'Choose your option:';
 
-	constructor(bot, chatId) {
+	constructor(bot, chat) {
 		this.bot = bot;
-		this.chatId = chatId;
+		this.chat = chat;
 	}
 
 	async init() {
-		const user = await UserService.join(this.chatId);
+		const user = await UserService.join(this.chat.id);
 
 		this.user = user;
 
@@ -24,7 +26,7 @@ class Mode {
 	}
 
 	initKeyboard(){
-		return this.bot.sendMessage(this.chatId, this.startMessage, {
+		return this.bot.sendMessage(this.chat.id, this.startMessage, {
 			reply_markup: {
 				keyboard: [this.buttons], 
 				resize_keyboard: true
@@ -33,7 +35,7 @@ class Mode {
 	}
 
 	initDefaultKeyboard(){
-		return this.bot.sendMessage(this.chatId, 'Choose your option:', {
+		return this.bot.sendMessage(this.chat.id, 'Choose your option:', {
 			reply_markup: {
 				keyboard: [this.defaultButtons], 
 				resize_keyboard: true
@@ -41,7 +43,15 @@ class Mode {
 		});
 	}
 
-	clear(){
+	createInlineKeyboard(buttons){
+		return {
+			reply_markup: JSON.stringify({
+				inline_keyboard: [buttons]
+			})
+		}
+	};
+
+	stop(){
 		return this.initDefaultKeyboard();
 	}
 }

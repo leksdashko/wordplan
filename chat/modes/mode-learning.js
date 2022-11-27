@@ -1,7 +1,9 @@
+const botService = require("../../services/bot-service");
 const UserService = require("../../services/user-service");
 const WordService = require("../../services/word-service");
 const { createArrayOfNumbers, shuffleArray } = require("../../utils");
 const Mode = require("./mode");
+const ModeEdit = require("./mode-edit");
 
 class ModeLearning extends Mode {
 	interval = 5000;
@@ -11,9 +13,23 @@ class ModeLearning extends Mode {
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';
 
+	ACTION_SKIP      = 'Skip';
+	ACTION_TRANSLATE = 'Translate';
+
 	async init(){
 		await super.init();
 		await this.start();
+
+		this.bot.on('callback_query', async msg => {
+			//const chatId = msg.message.chat.id;
+			const data = botService.parseInlineData(msg.data);
+
+			if(!data?.action) return false;
+
+			if(data.action == this.ACTION_EDIT) {
+				return await this.chat.setMode(new ModeEdit(this.bot, this.chat));
+			}
+		});
 	}
 
 	async start(){
@@ -22,8 +38,8 @@ class ModeLearning extends Mode {
 
 		const count = vocabulary.length;
 		if(!count){
-			await this.bot.sendMessage(this.chatId, 'Please add new words to your vocabulary');
-			return this.clear();
+			await this.bot.sendMessage(this.chat.id, 'Please add new words to your vocabulary');
+			return this.stop();
 		}
 
 		let notShowed = shuffleArray(createArrayOfNumbers(count));
@@ -32,7 +48,7 @@ class ModeLearning extends Mode {
 			return word.value + ' - ' + word.translation;
 		});
 
-		await this.bot.sendMessage(this.chatId, wordsList.join(' \n'));
+		await this.bot.sendMessage(this.chat.id, wordsList.join(' \n'));
 
 		const processId = setInterval(() => {
 			const index = notShowed.shift();
@@ -42,7 +58,11 @@ class ModeLearning extends Mode {
 				notShowed = createArrayOfNumbers(count);
 			}
 
-			this.bot.sendMessage(this.chatId, word.translation + ' - ' + processId);
+			this.bot.sendMessage(this.chat.id, word.translation + ' - ' + processId, this.createInlineKeyboard([
+				{text: word.value, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)},
+				{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
+				{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
+			]));
 		}, this.interval);
 
 		setTimeout(() => {
@@ -58,8 +78,6 @@ class ModeLearning extends Mode {
 		if(!user.learningId) return false;
 
 		this.initDefaultKeyboard();
-		
-		clearInterval(user.learningId);
 
 		return await UserService.clearLearningProcess(user);
 	}
