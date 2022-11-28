@@ -8,11 +8,15 @@ module.exports = [
 		mode: 'learning'
 	},
 	{
+		actions: ['Edit'],
+		mode: 'edit'
+	},
+	{
 		actions: ['Add new', '/add'],
 		mode: 'add'
 	},
 	{
-		actions: ['Stop', '/stop'],
+		actions: ['Stop', '/stop', 'Cancel'],
 		mode: 'stop'
 	}
-]
+];

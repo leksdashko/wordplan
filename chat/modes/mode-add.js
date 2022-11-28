@@ -1,9 +1,10 @@
 const botService = require("../../services/bot-service");
 const Mode = require("./mode");
 
-class ModeEdit extends Mode {
-	ID = 3;
+class ModeAdd extends Mode {
+	ID = 2;
 	buttons = [{text: this.ACTION_CANCEL}];
+
 
 	async init(){
 		await super.init();
@@ -16,4 +17,4 @@ class ModeEdit extends Mode {
 	}
 }
 
-module.exports = ModeEdit;
+module.exports = ModeAdd;

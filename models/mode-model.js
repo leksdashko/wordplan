@@ -1,9 +1,9 @@
 const sequelize = require('../db');
 const {DataTypes} = require('sequelize');
 
-const UserModel = sequelize.define('user', {
+const ModeModel = sequelize.define('mode', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    learningId: {type: DataTypes.STRING}
+		name: {type: DataTypes.STRING, unique: true}
 });
 
-module.exports = UserModel;
+module.exports = ModeModel;

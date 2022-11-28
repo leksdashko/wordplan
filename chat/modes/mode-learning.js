@@ -5,6 +5,7 @@ const { createArrayOfNumbers, shuffleArray } = require("../../utils");
 const Mode = require("./mode");
 
 class ModeLearning extends Mode {
+	ID = 4;
 	interval = 5000;
 	// expiredIn = 1000 * 60 * 60 * 1; // one hour
 	expiredIn = 15000;
