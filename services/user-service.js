@@ -1,17 +1,17 @@
+const UserDto = require('../dtos/user-dto');
 const UserModel = require('../models/user-model');
 
 class UserService {
-    static async join(chatId, username = null) {
-				chatId = chatId.toString();
-				
+    static async join(chatId) {
         const candidate = await this.getByChatId(chatId);
         if(candidate){
             return candidate;
         }
 
-        const user = await UserModel.create({chatId, username});
+        const user = await UserModel.create({chatId});
+				const userDto = new UserDto(user);
 
-        return user;
+        return userDto;
     }
 
 		static async setLearningProcess(userId, processId) {
@@ -31,12 +31,16 @@ class UserService {
 
 		static async getById(id) {
 			const user = await UserModel.findOne({where: {id}});
-			return user;
+			const userDto = new UserDto(user);
+
+      return userDto;
 		}
 
 		static async getByChatId(chatId) {
 			const user = await UserModel.findOne({where: {chatId:chatId.toString()}});
-			return user;
+			const userDto = new UserDto(user);
+
+      return userDto;
 		}
     
     static async getAllUsers() {

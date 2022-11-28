@@ -6,8 +6,8 @@ const ModeModel = require('./mode-model');
 ModeModel.hasOne(ChatModel);
 ChatModel.belongsTo(ModeModel);
 
-ChatModel.hasOne(UserModel);
-UserModel.belongsTo(ChatModel);
+UserModel.hasOne(ChatModel);
+ChatModel.belongsTo(UserModel);
 
 UserModel.hasMany(WordModel);
 WordModel.belongsTo(UserModel);
