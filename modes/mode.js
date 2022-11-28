@@ -13,10 +13,6 @@ class Mode {
 
 	startMessage    = 'Choose your option:';
 
-	setBot(bot) {
-		this.bot = bot;
-	}
-
 	setChat(chat) {
 		this.chat = chat;
 	}
@@ -26,7 +22,7 @@ class Mode {
 	}
 
 	initKeyboard(){
-		return this.bot.sendMessage(this.chat.chatId, this.startMessage, {
+		return this.chat.bot.sendMessage(this.chat.chatId, this.startMessage, {
 			reply_markup: {
 				keyboard: [this.buttons], 
 				resize_keyboard: true
@@ -35,7 +31,7 @@ class Mode {
 	}
 
 	initDefaultKeyboard(){
-		return this.bot.sendMessage(this.chat.chatId, 'Choose your option:', {
+		return this.chat.bot.sendMessage(this.chat.chatId, 'Choose your option:', {
 			reply_markup: {
 				keyboard: [this.defaultButtons], 
 				resize_keyboard: true

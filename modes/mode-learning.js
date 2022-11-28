@@ -14,9 +14,8 @@ class ModeLearning extends Mode {
 	startMessage = 'Learning process has started';
 
 	async init(){
-		this.initKeyboard();
-		//await super.init();
-		//await this.start();
+		await super.init();
+		await this.start();
 	}
 
 	async start(){
@@ -25,7 +24,7 @@ class ModeLearning extends Mode {
 
 		const count = vocabulary.length;
 		if(!count){
-			await this.bot.sendMessage(this.chat.chatId, 'Please add new words to your vocabulary');
+			await this.chat.bot.sendMessage(this.chat.chatId, 'Please add new words to your vocabulary:');
 			return this.stop();
 		}
 
@@ -35,7 +34,7 @@ class ModeLearning extends Mode {
 			return word.value + ' - ' + word.translation;
 		});
 
-		await this.bot.sendMessage(this.chat.chatId, wordsList.join(' \n'));
+		await this.chat.bot.sendMessage(this.chat.chatId, wordsList.join(' \n'));
 
 		const processId = setInterval(() => {
 			const index = notShowed.shift();
@@ -45,7 +44,7 @@ class ModeLearning extends Mode {
 				notShowed = createArrayOfNumbers(count);
 			}
 
-			this.bot.sendMessage(this.chat.chatId, word.translation + ' - ' + processId, this.createInlineKeyboard([
+			this.chat.bot.sendMessage(this.chat.chatId, word.translation + ' - ' + processId, this.createInlineKeyboard([
 				{text: word.value, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)},
 				{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
 				{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
@@ -61,8 +60,6 @@ class ModeLearning extends Mode {
 
 	async stop() {
 		const user = await UserService.getById(this.chat.user.id);
-
-		if(!user.learningId) return false;
 
 		this.initDefaultKeyboard();
 

@@ -13,8 +13,9 @@ class BotManager {
 			const chatId = msg.chat.id;
 
 			const chat = await ChatService.createChat(chatId);
+			chat.setBot(bot);
 
-			return this.initRoute(bot, chat, text);
+			return this.initRoute(chat, text);
 		});
 
 		bot.on('callback_query', async msg => {
@@ -23,8 +24,9 @@ class BotManager {
 			if(!data?.action) return false;
 
 			const chat = await ChatService.createChat(msg.message.chat.id);
+			chat.setBot(bot);
 
-			return this.initRoute(bot, chat, data.action);
+			return this.initRoute(chat, data.action);
 		});
 	}
 
@@ -32,19 +34,18 @@ class BotManager {
 		return chat.bot.sendMessage(chat.id, message);
 	}
 
-	initRoute(bot, chat, action) {
+	initRoute(chat, action) {
 		try {
 			routes.forEach(async (route) => {
 				if(route.actions.indexOf(action) !== -1){
 					const mode = ModeService.createModeByName(route.mode);
-					mode.setBot(bot);
 
 					return await chat.activateMode(mode);
 				}
 			});
 		} catch(e) {
 			console.log(e);
-			return this.error(bot, chat, 'Something went wrong');
+			return this.error(chat.bot, chat, 'Something went wrong');
 		}
 	}
 }

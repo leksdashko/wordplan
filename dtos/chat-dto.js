@@ -1,5 +1,6 @@
 const ChatModel = require("../models/chat-model");
 const UserModel = require("../models/user-model");
+const ModeService = require("../services/mode-service");
 const UserDto = require("./user-dto");
 
 module.exports = class ChatDto {
@@ -28,11 +29,15 @@ module.exports = class ChatDto {
 		}
 
 		if(this.model?.modeId){
-			const mode = ModeService.createModeById(this.model.modeId);
+			const mode = await ModeService.createModeById(this.model.modeId);
 			mode.setChat(this);
 
 			this.setMode(mode);
 		}
+	}
+
+	async setBot(bot) {
+		this.bot = bot;
 	}
 
 	async setUser(user) {
@@ -56,11 +61,11 @@ module.exports = class ChatDto {
 
 		await mode.init();
 
-		// return await this.setMode(mode);
+		return await this.setMode(mode);
 	}
 
 	async save() {
-		const model = await ChatModel.findOne({where: {id: this.id}});
+		const model = await ChatModel.findOne({where: {chatId: this.chatId}});
 		if(!model) return;
 
 		if(this.user) model.userId = this.user.id;

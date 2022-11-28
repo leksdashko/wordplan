@@ -5,11 +5,10 @@ class ModeAdd extends Mode {
 	ID = 4;
 	buttons = [{text: this.ACTION_CANCEL}];
 
-
 	async init(){
 		await super.init();
 
-		this.bot.sendMessage(this.chat.chatId, 'Err - err', this.createInlineKeyboard([
+		this.chat.bot.sendMessage(this.chat.chatId, 'Err - err', this.createInlineKeyboard([
 			{text: this.ACTION_UPDATE, callback_data: botService.createInlineData(this.ACTION_UPDATE, 123)}
 		]));
 
