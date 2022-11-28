@@ -1,4 +1,5 @@
 const UserDto = require('../dtos/user-dto');
+const ChatModel = require('../models/chat-model');
 const UserModel = require('../models/user-model');
 
 class UserService {
@@ -8,7 +9,7 @@ class UserService {
             return candidate;
         }
 
-        const user = await UserModel.create({chatId});
+        const user = await UserModel.create();
 				const userDto = new UserDto(user);
 
         return userDto;
@@ -31,13 +32,21 @@ class UserService {
 
 		static async getById(id) {
 			const user = await UserModel.findOne({where: {id}});
+
+			if(!user) return;
+
 			const userDto = new UserDto(user);
 
       return userDto;
 		}
 
 		static async getByChatId(chatId) {
-			const user = await UserModel.findOne({where: {chatId:chatId.toString()}});
+			const chat = await ChatModel.findOne({where: {chatId}});
+
+			if(!chat?.userId) return;
+
+			const user = await UserModel.findOne({where: {id: chat.userId}});
+			
 			const userDto = new UserDto(user);
 
       return userDto;

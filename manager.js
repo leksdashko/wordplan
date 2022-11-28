@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const routes = require('./routes');
 const botService = require('./services/bot-service');
 const ChatService = require('./services/chat-service');
-const UserService = require('./services/user-service');
+const ModeService = require('./services/mode-service');
 
 class BotManager {
 	init() {
@@ -13,10 +13,6 @@ class BotManager {
 			const chatId = msg.chat.id;
 
 			const chat = await ChatService.createChat(chatId);
-			chat.setBot(bot);
-
-			const user = await UserService.join(chat.id);
-			chat.setUser(user);
 
 			return this.initRoute(bot, chat, text);
 		});
@@ -26,26 +22,24 @@ class BotManager {
 
 			if(!data?.action) return false;
 
-			console.log(data);
-
 			const chat = await ChatService.createChat(msg.message.chat.id);
-			const user = await UserService.join(chat.id);
-			chat.setUser(user);
 
 			return this.initRoute(bot, chat, data.action);
 		});
 	}
 
-	error(bot, chat, message){
-		return bot.sendMessage(chat.id, message);
+	error(chat, message){
+		return chat.bot.sendMessage(chat.id, message);
 	}
 
 	initRoute(bot, chat, action) {
 		try {
 			routes.forEach(async (route) => {
 				if(route.actions.indexOf(action) !== -1){
-					const modeType = require('./chat/modes/mode-' + route.mode);
-					return await chat.setMode(new modeType(bot, chat));
+					const mode = ModeService.createModeByName(route.mode);
+					mode.setBot(bot);
+
+					return await chat.activateMode(mode);
 				}
 			});
 		} catch(e) {

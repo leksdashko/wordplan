@@ -1,11 +1,11 @@
-const botService = require("../../services/bot-service");
-const UserService = require("../../services/user-service");
-const WordService = require("../../services/word-service");
-const { createArrayOfNumbers, shuffleArray } = require("../../utils");
+const botService = require("../services/bot-service");
+const UserService = require("../services/user-service");
+const WordService = require("../services/word-service");
+const { createArrayOfNumbers, shuffleArray } = require("../utils");
 const Mode = require("./mode");
 
 class ModeLearning extends Mode {
-	ID = 4;
+	ID = 2;
 	interval = 5000;
 	// expiredIn = 1000 * 60 * 60 * 1; // one hour
 	expiredIn = 15000;
@@ -14,8 +14,9 @@ class ModeLearning extends Mode {
 	startMessage = 'Learning process has started';
 
 	async init(){
-		await super.init();
-		await this.start();
+		this.initKeyboard();
+		//await super.init();
+		//await this.start();
 	}
 
 	async start(){
@@ -24,7 +25,7 @@ class ModeLearning extends Mode {
 
 		const count = vocabulary.length;
 		if(!count){
-			await this.bot.sendMessage(this.chat.id, 'Please add new words to your vocabulary');
+			await this.bot.sendMessage(this.chat.chatId, 'Please add new words to your vocabulary');
 			return this.stop();
 		}
 
@@ -34,7 +35,7 @@ class ModeLearning extends Mode {
 			return word.value + ' - ' + word.translation;
 		});
 
-		await this.bot.sendMessage(this.chat.id, wordsList.join(' \n'));
+		await this.bot.sendMessage(this.chat.chatId, wordsList.join(' \n'));
 
 		const processId = setInterval(() => {
 			const index = notShowed.shift();
@@ -44,7 +45,7 @@ class ModeLearning extends Mode {
 				notShowed = createArrayOfNumbers(count);
 			}
 
-			this.bot.sendMessage(this.chat.id, word.translation + ' - ' + processId, this.createInlineKeyboard([
+			this.bot.sendMessage(this.chat.chatId, word.translation + ' - ' + processId, this.createInlineKeyboard([
 				{text: word.value, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)},
 				{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
 				{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}

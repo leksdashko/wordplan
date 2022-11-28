@@ -1,7 +1,7 @@
 const Mode = require("./mode");
 
 class ModeMain extends Mode {
-	ID = 5;
+	ID = 1;
 }
 
 module.exports = ModeMain;

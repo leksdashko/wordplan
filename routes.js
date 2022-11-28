@@ -1,22 +1,22 @@
 module.exports = [
 	{
 		actions: ['/start', 'Start'],
-		mode: 'main'
+		mode: 'Main'
 	},
 	{
 		actions: ['Learning'],
-		mode: 'learning'
+		mode: 'Learning'
 	},
 	{
 		actions: ['Edit'],
-		mode: 'edit'
+		mode: 'Edit'
 	},
 	{
 		actions: ['Add new', '/add'],
-		mode: 'add'
+		mode: 'Add'
 	},
 	{
 		actions: ['Stop', '/stop', 'Cancel'],
-		mode: 'stop'
+		mode: 'Stop'
 	}
 ];

@@ -1,7 +1,9 @@
-const UserService = require("../../services/user-service");
+const UserService = require("../services/user-service");
 const Mode = require("./mode");
 
 class ModeStop extends Mode {
+	ID = 5;
+	
 	async init() {
 		await super.init();
 
