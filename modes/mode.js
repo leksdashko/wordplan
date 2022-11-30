@@ -13,8 +13,14 @@ class Mode {
 
 	startMessage    = 'Choose your option:';
 
+	data = [];
+
 	setChat(chat) {
 		this.chat = chat;
+	}
+
+	push(data){
+		this.data.push(data);
 	}
 
 	async init() {

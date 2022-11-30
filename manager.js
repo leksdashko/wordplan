@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
+const { ModeAdd } = require('./modes');
 const routes = require('./routes');
 const botService = require('./services/bot-service');
 const ChatService = require('./services/chat-service');
@@ -15,7 +16,7 @@ class BotManager {
 			const chat = await ChatService.createChat(chatId);
 			chat.setBot(bot);
 
-			return this.initRoute(chat, text);
+			return await this.initRoute(chat, text);
 		});
 
 		bot.on('callback_query', async msg => {
@@ -26,16 +27,22 @@ class BotManager {
 			const chat = await ChatService.createChat(msg.message.chat.id);
 			chat.setBot(bot);
 
-			return this.initRoute(chat, data.action);
+			return await this.initRoute(chat, data.action);
 		});
 	}
 
 	error(chat, message){
-		return chat.bot.sendMessage(chat.id, message);
+		console.log(chat);
+		return chat.bot.sendMessage(chat.chatId, message);
 	}
 
-	initRoute(chat, action) {
+	async initRoute(chat, action) {
 		try {
+
+			if(chat.mode instanceof ModeAdd){
+				return chat.sendData(action);
+			}
+
 			routes.forEach(async (route) => {
 				if(route.actions.indexOf(action) !== -1){
 					const mode = ModeService.createModeByName(route.mode);
@@ -45,7 +52,7 @@ class BotManager {
 			});
 		} catch(e) {
 			console.log(e);
-			return this.error(chat.bot, chat, 'Something went wrong');
+			return this.error(chat, 'Something went wrong');
 		}
 	}
 }

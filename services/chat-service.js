@@ -6,6 +6,8 @@ const ModeService = require('./mode-service');
 
 class ChatService {
     static async createChat(chatId) {
+				chatId = chatId.toString();
+				
         const candidate = await this.getByChatId(chatId);
         if(candidate){
             return candidate;
