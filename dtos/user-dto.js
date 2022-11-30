@@ -43,6 +43,7 @@ module.exports = class UserDto {
 		if(!model) return;
 
 		model.addingWordId = this.addingWordId;
+		model.learningId = this.learningId;
 
 		return await model.save();
 	}

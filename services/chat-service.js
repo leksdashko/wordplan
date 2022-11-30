@@ -1,13 +1,10 @@
 const ChatDto = require('../dtos/chat-dto');
-const UserDto = require('../dtos/user-dto');
 const ChatModel = require('../models/chat-model');
-const UserModel = require('../models/user-model');
-const ModeService = require('./mode-service');
 
 class ChatService {
     static async createChat(chatId) {
 				chatId = chatId.toString();
-				
+
         const candidate = await this.getByChatId(chatId);
         if(candidate){
             return candidate;

@@ -52,12 +52,10 @@ module.exports = class ChatDto {
 		return await this.save();
 	}
 
-	sendData(text) {
+	async sendData(text) {
 		if(!this.mode) return false;
-
-		console.log(text);
 		
-		return this.mode.push(text);
+		return await this.mode.push(text);
 	}
 
 	async activateMode(mode) {

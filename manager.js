@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { ModeAdd } = require('./modes');
+const { ModeAdd, ModeStop } = require('./modes');
 const routes = require('./routes');
 const botService = require('./services/bot-service');
 const ChatService = require('./services/chat-service');
@@ -38,18 +38,29 @@ class BotManager {
 
 	async initRoute(chat, action) {
 		try {
+			const currentMode = chat.mode;
+			const isAdd = currentMode instanceof ModeAdd;
 
-			if(chat.mode instanceof ModeAdd){
-				return chat.sendData(action);
-			}
+			let mode;
 
 			routes.forEach(async (route) => {
 				if(route.actions.indexOf(action) !== -1){
-					const mode = ModeService.createModeByName(route.mode);
-
-					return await chat.activateMode(mode);
+					mode = ModeService.createModeByName(route.mode);
 				}
 			});
+
+			if(!mode) return;
+
+			const isStop = mode instanceof ModeStop;
+
+			console.log(isStop);
+
+			if(isAdd && !isStop){
+				return await chat.sendData(action);
+			}
+
+			return await chat.activateMode(mode);
+
 		} catch(e) {
 			console.log(e);
 			return this.error(chat, 'Something went wrong');

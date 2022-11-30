@@ -19,8 +19,7 @@ class ModeLearning extends Mode {
 	}
 
 	async start(){
-		const wordService = new WordService();
-		const vocabulary = await wordService.getList(this.chat.user.id);
+		const vocabulary = await WordService.getList(this.chat.user.id);
 
 		const count = vocabulary.length;
 		if(!count){

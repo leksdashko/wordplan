@@ -18,7 +18,7 @@ class UserService {
 		static async setLearningProcess(userId, processId) {
 			const user = await UserModel.findOne({where: {id: userId}});
 			user.learningId = processId + 0;
-			return user.save();
+			return await user.save();
 		}
 
 		static async clearLearningProcess(user) {
@@ -27,7 +27,7 @@ class UserService {
 			clearInterval(user.learningId);
 
 			user.learningId = null;
-			return user.save();
+			return await user.save();
 		}
 
 		static async getById(id) {
