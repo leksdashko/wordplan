@@ -10,9 +10,12 @@ class WordService {
 	}
 
 	static async add(userId, value, translation = null) {
-		const word = await WordModel.create({userId, value, translation});
-		const wordDto = new WordDto(word);
+		let word = await WordModel.findOne({where: {userId, translation: null, isLearned: false}});
+		if(!word){
+			word = await WordModel.create({userId, value, translation});
+		}
 
+		const wordDto = new WordDto(word);
 		return wordDto;
 	}
 	

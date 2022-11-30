@@ -7,8 +7,9 @@ const Mode = require("./mode");
 class ModeLearning extends Mode {
 	ID = 2;
 	interval = 5000;
-	// expiredIn = 1000 * 60 * 60 * 1; // one hour
-	expiredIn = 15000;
+	expiredIn = 15000; // sign - знак though - хотя through -
+	// interval = 30000;
+	// expiredIn = 500 * 60 * 60 * 1; // one hour
 
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';

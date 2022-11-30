@@ -49,11 +49,7 @@ class BotManager {
 				}
 			});
 
-			if(!mode) return;
-
-			const isStop = mode instanceof ModeStop;
-
-			console.log(isStop);
+			const isStop = !!(mode && mode instanceof ModeStop);
 
 			if(isAdd && !isStop){
 				return await chat.sendData(action);
