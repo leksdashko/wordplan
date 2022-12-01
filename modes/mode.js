@@ -48,7 +48,7 @@ class Mode {
 	createInlineKeyboard(buttons){
 		return {
 			reply_markup: JSON.stringify({
-				inline_keyboard: [buttons]
+				inline_keyboard: buttons,
 			})
 		}
 	};

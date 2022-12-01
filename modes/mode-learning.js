@@ -7,9 +7,9 @@ const Mode = require("./mode");
 class ModeLearning extends Mode {
 	ID = 2;
 	interval = 5000;
-	expiredIn = 15000; // sign - знак though - хотя through -
+	expiredIn = 30000;
 	// interval = 30000;
-	// expiredIn = 500 * 60 * 60 * 1; // one hour
+	// expiredIn = 1000 * 60 * 60 * 1; // one hour
 
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';
@@ -36,19 +36,29 @@ class ModeLearning extends Mode {
 
 		await this.chat.bot.sendMessage(this.chat.chatId, wordsList.join(' \n'));
 
-		const processId = setInterval(() => {
+		let showValue = true;
+
+		const processId = setInterval(async () => {
 			const index = notShowed.shift();
 			const word = vocabulary[index];
 
+			const value = showValue ? word.value : word.translation;
+			const explanation = showValue ? word.translation : word.value;
+
+			await this.chat.bot.sendMessage(this.chat.chatId, value, this.createInlineKeyboard([
+				[
+					{text: explanation + ' - ' + processId, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)}
+				],
+				[
+					{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
+					{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
+				]
+			]));
+
 			if(notShowed.length < 1){
+				showValue = !showValue;
 				notShowed = createArrayOfNumbers(count);
 			}
-
-			this.chat.bot.sendMessage(this.chat.chatId, word.translation + ' - ' + processId, this.createInlineKeyboard([
-				{text: word.value, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)},
-				{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
-				{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
-			]));
 		}, this.interval);
 
 		setTimeout(() => {

@@ -2,9 +2,7 @@ const WordDto = require('../dtos/word-dto');
 const WordModel = require('../models/word-model');
 
 class WordService {
-	defaultLimit = 10;
-
-	static async getList(userId, limit = this.defaultLimit) {
+	static async getList(userId, limit = 2) {
 		const list = await WordModel.findAll({where: {userId, isLearned: false}, limit, order: [['id', 'DESC']]});
 		return list;
 	}
