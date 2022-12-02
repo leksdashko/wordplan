@@ -27,7 +27,10 @@ class BotManager {
 			const chat = await ChatService.createChat(msg.message.chat.id);
 			chat.setBot(bot);
 
-			return await this.initRoute(chat, data.action);
+			console.log(chat);
+			console.log(data);
+
+			//return await this.initRoute(chat, data.action);
 		});
 	}
 

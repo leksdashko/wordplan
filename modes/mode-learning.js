@@ -6,10 +6,12 @@ const Mode = require("./mode");
 
 class ModeLearning extends Mode {
 	ID = 2;
-	interval = 5000;
+	interval = 3000;
 	expiredIn = 30000;
 	// interval = 30000;
 	// expiredIn = 1000 * 60 * 60 * 1; // one hour
+
+	vocabulary = [];
 
 	buttons = [{text: this.ACTION_STOP}];
 	startMessage = 'Learning process has started';
@@ -20,9 +22,9 @@ class ModeLearning extends Mode {
 	}
 
 	async start(){
-		const vocabulary = await WordService.getList(this.chat.user.id);
+		this.vocabulary = await WordService.getList(this.chat.user.id);
 
-		const count = vocabulary.length;
+		const count = this.vocabulary.length;
 		if(!count){
 			await this.chat.bot.sendMessage(this.chat.chatId, 'Please add new words to your vocabulary:');
 			return this.stop();
@@ -30,7 +32,7 @@ class ModeLearning extends Mode {
 
 		let notShowed = shuffleArray(createArrayOfNumbers(count));
 
-		const wordsList = vocabulary.map(word => {
+		const wordsList = this.vocabulary.map(word => {
 			return word.value + ' - ' + word.translation;
 		});
 
@@ -40,7 +42,7 @@ class ModeLearning extends Mode {
 
 		const processId = setInterval(async () => {
 			const index = notShowed.shift();
-			const word = vocabulary[index];
+			const word = this.vocabulary[index];
 
 			const value = showValue ? word.value : word.translation;
 			const explanation = showValue ? word.translation : word.value;
@@ -70,6 +72,7 @@ class ModeLearning extends Mode {
 
 	async stop() {
 		const user = await UserService.getById(this.chat.user.id);
+		if(!user.learningId) return;
 
 		this.initDefaultKeyboard();
 
