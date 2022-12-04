@@ -34,9 +34,9 @@ class ModeAdd extends Mode {
 
 	wordAdded(word){
 		return this.chat.bot.sendMessage(this.chat.chatId, word.value + ' - ' + word.translation,
-			this.createInlineKeyboard([
+			this.createInlineKeyboard([[
 				{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
-			])
+			]])
 		);
 	}
 
