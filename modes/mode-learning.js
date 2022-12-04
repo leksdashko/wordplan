@@ -6,10 +6,8 @@ const Mode = require("./mode");
 
 class ModeLearning extends Mode {
 	ID = 2;
-	interval = 3000;
-	expiredIn = 30000;
-	// interval = 30000;
-	// expiredIn = 1000 * 60 * 60 * 1; // one hour
+	interval = 60000;
+	expiredIn = 1000 * 60 * 60 * 1; // one hour
 
 	vocabulary = [];
 
