@@ -13,7 +13,7 @@ class BotManager {
 			const text = msg.text;
 			const chatId = msg.chat.id;
 
-			return bot.sendMessage(chatId, 'Chat id is ' + chatId + '; Message: ' + text);
+			// return bot.sendMessage(chatId, 'Chat id is ' + chatId + '; Message: ' + text);
 
 			const chat = await ChatService.createChat(chatId);
 			chat.setBot(bot);
