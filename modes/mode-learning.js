@@ -45,10 +45,7 @@ class ModeLearning extends Mode {
 			const value = showValue ? word.value : word.translation;
 			const explanation = showValue ? word.translation : word.value;
 
-			await this.chat.bot.sendMessage(this.chat.chatId, value, this.createInlineKeyboard([
-				[
-					{text: explanation + ' - ' + processId, callback_data: botService.createInlineData(this.ACTION_TRANSLATE, word.id)}
-				],
+			await this.chat.bot.sendMessage(this.chat.chatId, value + ' - ||' + explanation + '|| - ' + processId, this.createInlineKeyboard([
 				[
 					{text: this.ACTION_SKIP, callback_data: botService.createInlineData(this.ACTION_SKIP, word.id)},
 					{text: this.ACTION_EDIT, callback_data: botService.createInlineData(this.ACTION_EDIT, word.id)}
