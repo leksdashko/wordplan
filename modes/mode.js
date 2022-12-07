@@ -11,7 +11,7 @@ class Mode {
 	buttons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
 	defaultButtons = [{text: this.ACTION_LEARNING}, {text: this.ACTION_ADD}];
 
-	startMessage    = 'Choose your option:';
+	startMessage    = null;
 
 	data = [];
 

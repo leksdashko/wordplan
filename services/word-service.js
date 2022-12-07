@@ -3,7 +3,7 @@ const WordModel = require('../models/word-model');
 
 class WordService {
 	static async getList(userId, limit = 10) {
-		const list = await WordModel.findAll({where: {userId, isLearned: false}, limit, order: [['id', 'DESC']]});
+		const list = await WordModel.findAll({where: {userId, isLearned: false, translation}, limit, order: [['id', 'DESC']]});
 		return list;
 	}
 
